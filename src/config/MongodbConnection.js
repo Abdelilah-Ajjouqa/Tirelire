@@ -11,7 +11,7 @@ import mongoose from "mongoose";
 
 // export default connectDb;
 class MongodbConnection {
-    constructor(uri = 'mongodb://localhost:27017/tirelire') {
+    constructor(uri = 'mongodb://localhost:27017/Tirelire') {
         this.uri = uri;
         this.isConnected = false;
     };
