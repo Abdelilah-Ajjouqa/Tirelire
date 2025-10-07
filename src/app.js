@@ -3,7 +3,7 @@ import MongodbConnection from "./config/MongodbConnection.js";
 
 const app = express();
 const db = new MongodbConnection();
-// db.connect();
+db.connect();
 
 app.use(express.json());
 
