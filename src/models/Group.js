@@ -13,7 +13,6 @@ const groupSchema = new mongoose.Schema({
     groupFund: { type: Number, default: 0 },
     isActive: { type: Boolean, default: true },
     nextPayoutUser: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-    transactions: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Transaction' }],
     messages: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Message' }],
     notifications: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Notification' }],
     status: { type: String, enum: ['waiting', 'active', 'completed', 'cancelled'], default: 'waiting' },

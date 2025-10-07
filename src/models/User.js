@@ -11,7 +11,6 @@ const userSchema = new mongoose.Schema({
     isKYCVirified: { type: Boolean, default: false },
     groups: [{ type: mongoose.Schema.ObjectId, ref: 'Group' }],
     paymentHistory: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Payment' }],
-    tickets: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Ticket' }],
     notifications: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Notification' }],
     messages: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Message' }],
     facialVerificationStatus: { type: String, enum: ['pending', 'verified', 'failed'], default: 'pending' },
