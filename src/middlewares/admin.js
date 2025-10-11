@@ -1,7 +1,6 @@
 export const isAdmin = (req, res, next) => {
     if (req.user && req.user.role !== 'Admin') {
         return res.status(403).json({
-            success: false,
             message: 'Admin access required'
         });
     }
@@ -13,7 +12,6 @@ export const isOwnerOrAdmin = (req, res, next) => {
     
     if (req.user.role !== 'Admin' && req.user._id.toString() !== requestedUserId) {
         return res.status(403).json({ 
-            success: false,
             message: 'Access denied: You can only access your own data' 
         });
     }
