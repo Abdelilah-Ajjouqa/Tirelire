@@ -1,9 +1,9 @@
 import * as authControllers from "../controllers/auth.controller.js";
-import {authenticateToken} from "../middlewares/auth.js";
-import e from "express";
+import express from "express";
 
-const app = e.Router();
+const router = express.Router();
 
-app.post('/register', authControllers.register);
+router.post('/register', authControllers.register);
+router.post('/login', authControllers.login);
 
-export default app;
+export default router;
