@@ -1,9 +1,20 @@
 import * as authControllers from "../controllers/auth.controller.js";
-import {authenticateToken} from "../middlewares/auth.js";
-import e from "express";
+import { authenticateToken } from "../middlewares/auth.js";
+import express from "express";
 
-const app = e.Router();
+const router = express.Router();
 
-app.post('/register', authControllers.register);
+// Public routes
+router.post('/register', authControllers.register);
+router.post('/login', authControllers.login);
 
-export default app;
+// Protected routes
+router.get('/me', authenticateToken, (req, res) => {
+    res.json({
+        message: "Profile retrieved successfully",
+        data: { user: req.user }
+    });
+});
+
+
+export default router;
