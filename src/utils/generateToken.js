@@ -7,5 +7,6 @@ export const generateToken = (userId) => {
         {
             expiresIn: process.env.JWT_EXPIRES_IN,
         }
-    )
+    );
+    return token;
 };

@@ -1,29 +1,25 @@
-// export const validateRegister = (req, res, next) => {
-//     const { firstName, lastName, email, password } = req.body;
+import * as z from "zod";
 
-//     if (!firstName || !lastName || !email || !password) {
-//         return res.status(400).json({
-//             message: "All field are required"
-//         });
-//     }
+const userSchema = z.object({
+    firstName: z.string().min(1, "First name is required"),
+    lastName: z.string().min(1, "Last name is required"),
+    email: z.string().email("Invalid email format"),
+    password: z.string().min(6, "Password should be at least 6 characters"),
+    nationalIdNUmber: z.string().optional(),
+    nationalIdImage: z.string().optional(),
+    role: z.enum(["Particulier", "Admin"]).default("Particulier"),
+    isKYCVirified: z.boolean().default(false),
+    groups: z.array(z.string()).optional(),
+    paymentHistory: z.array(z.string()).optional(),
+    notifications: z.array(z.string()).optional(),
+    messages: z.array(z.string()).optional(),
+    facialVerificationStatus: z.enum(["pending", "verified", "failed"]).default("pending")
+});
 
-//     if (password.length < 6) {
-//         return res.status(400).json({
-//             message: "Password must be at least 6 characters long"
-//         });
-//     }
+export const validateUserRegistration = (userInput) => {
+    return userSchema.safeParse(userInput);
+};
 
-//     next();
-// }
-
-// export const validateLogin = (req, res, next) => {
-//     const { email, password } = req.body;
-//     if(!email || !password){
-//         return res.status(400).json({
-//             message: "Email and password are required"
-//         });
-//     }
-
-//     next();
-// }
-
+export const validateUserUpdate = (userInput) => {
+    return userSchema.partial().safeParse(userInput);
+};
