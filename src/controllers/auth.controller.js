@@ -1,7 +1,7 @@
 import bcrypt from 'bcryptjs';
 import User from '../models/User.js';
 import { generateToken } from '../utils/generateToken.js';
-import { validateUserRegistration } from '../middlewares/validation.js';
+import { validateUserRegistration, validateUserLogin } from '../middlewares/validation.js';
 
 export const register = async (req, res) => {
     try {
@@ -10,7 +10,7 @@ export const register = async (req, res) => {
         if (!validation.success) {
             return res.status(400).json({
                 message: "Validation failed",
-                errors: validation.error
+                errors: validation.error.errors
             });
         }
 
@@ -63,20 +63,25 @@ export const register = async (req, res) => {
 
 export const login = async (req, res) => {
     try {
-        const { email, password } = req.body;
-
-        // input validation
-        if (!email || !password) {
+        const validation = validateUserLogin(req.body);
+        if (!validation.success) {
             return res.status(400).json({
-                message: "Please provide email and password"
+                message: "Validation failed",
+                errors: validation.error.errors.map(err => ({
+                    field: err.path.join('.'),
+                    message: err.message
+                }))
             });
         }
+
+        const { email, password } = validation.data;
 
         // Find user
         const user = await User.findOne({ email });
         if (!user) {
             return res.status(401).json({
-                message: "Invalid credentials"
+                message: "Invalid credentials",
+                code: "INVALID_CREDENTIALS"
             });
         }
 
@@ -84,7 +89,8 @@ export const login = async (req, res) => {
         const isPasswordValid = await bcrypt.compare(password, user.password);
         if (!isPasswordValid) {
             return res.status(401).json({
-                message: "Invalid credentials"
+                message: "Invalid credentials",
+                code: "INVALID_CREDENTIALS"
             });
         }
 
@@ -99,7 +105,9 @@ export const login = async (req, res) => {
                     firstName: user.firstName,
                     lastName: user.lastName,
                     email: user.email,
-                    role: user.role
+                    role: user.role,
+                    isKYCVerified: user.isKYCVerified,
+                    facialVerificationStatus: user.facialVerificationStatus
                 },
                 token
             }
@@ -108,7 +116,9 @@ export const login = async (req, res) => {
     } catch (error) {
         console.error('Login error:', error);
         res.status(500).json({
-            message: "Internal server error"
+            success: false,
+            message: "Internal server error",
+            code: "INTERNAL_SERVER_ERROR"
         });
     }
 };
