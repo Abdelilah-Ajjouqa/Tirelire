@@ -1,7 +1,7 @@
 import bcrypt from 'bcryptjs';
 import User from '../models/User.js';
 import { generateToken } from '../utils/generateToken.js';
-import { validateUserRegistration, validateUserLogin } from '../middlewares/validation.js';
+import { validateUserRegistration, validateUserLogin } from '../validation/validation.js';
 
 export const register = async (req, res) => {
     try {
