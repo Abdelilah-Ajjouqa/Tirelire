@@ -1,6 +1,7 @@
 import express from "express";
 import MongodbConnection from "./config/MongodbConnection.js";
 import authRoutes from './routes/auth.routes.js';
+import kycRoutes from './routes/kyc.routes.js';
 import dotenv from 'dotenv';
 
 // Load environment variables
@@ -11,7 +12,8 @@ const db = new MongodbConnection();
 db.connect();
 
 app.use(express.json());
-app.use('/api/auth', authRoutes)
+app.use('/api/auth', authRoutes);
+app.use('/api/kyc', kycRoutes);
 
 app.get('/', (req, res) => {
     res.send('Tirelire API is running...');
