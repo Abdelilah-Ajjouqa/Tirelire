@@ -4,12 +4,12 @@ import { kycSubmissionSchema, kycReviewSchema } from "../validation/kyc.validati
 export const submitKYC = async (req, res) => {
     try {
         const bodyReq = req.body;
-        const user = req.user._id
+        const userId = req.user._id
         const validateData = kycSubmissionSchema.parse(bodyReq);
         const file = req.file;
         const filePath = file ? file.path : undefined;
 
-        const kycVerification = await kycServices.submitKYC(user, {
+        const kycVerification = await kycServices.submitKYC(userId, {
             ...validateData,
             nationalIdImage: filePath
         });

@@ -12,7 +12,6 @@ export const submitKYC = async (userId, kycData) => {
             throw new Error('You already have a KYC verification in progress');
         }
 
-        // Create new KYC verification
         const kycVerification = new KYCVerification({
             user: userId,
             ...kycData
@@ -33,8 +32,7 @@ export const submitKYC = async (userId, kycData) => {
     }
 };
 
-// Get KYC status for user
-export const getKYCStatus = async (userId) => {
+export const getUserKYC = async (userId) => {
     try {
         const kycVerification = await KYCVerification
             .findOne({ user: userId })
@@ -46,7 +44,6 @@ export const getKYCStatus = async (userId) => {
     }
 };
 
-// Get KYC verification by ID
 export const getKYCById = async (kycId) => {
     try {
         const kycVerification = await KYCVerification.findById(kycId)
