@@ -1,24 +1,23 @@
 # Tirelire API
 
-A REST API for managing rotating savings and credit associations (ROSCAs), also known as "Darte" in Morocco or "Tirelire" in French. This platform lets users create and join savings groups with automated payment tracking, KYC verification, and cycle management.
+A comprehensive REST API for managing rotating savings and credit associations (ROSCAs), also known as "Darte" in Morocco, or "tirelire" in French. This platform enables users to create and participate in savings groups with automated payment tracking, KYC verification, and cycle management.
 
 ## 📋 Table of Contents
 
-- [Features](https://www.notion.so/cb4369d9154f41a18de6c57a17e0d638?pvs=21)
-- [Technology Stack](https://www.notion.so/cb4369d9154f41a18de6c57a17e0d638?pvs=21)
-- [Prerequisites](https://www.notion.so/cb4369d9154f41a18de6c57a17e0d638?pvs=21)
-- [Installation](https://www.notion.so/cb4369d9154f41a18de6c57a17e0d638?pvs=21)
-- [Configuration](https://www.notion.so/cb4369d9154f41a18de6c57a17e0d638?pvs=21)
-- [API Documentation](https://www.notion.so/cb4369d9154f41a18de6c57a17e0d638?pvs=21)
-- [Database Models](https://www.notion.so/cb4369d9154f41a18de6c57a17e0d638?pvs=21)
-- [Project Structure](https://www.notion.so/cb4369d9154f41a18de6c57a17e0d638?pvs=21)
-- [Usage Examples](https://www.notion.so/cb4369d9154f41a18de6c57a17e0d638?pvs=21)
-- [Security](https://www.notion.so/cb4369d9154f41a18de6c57a17e0d638?pvs=21)
+- [Features](#features)
+- [Technology Stack](#technology-stack)
+- [Prerequisites](#prerequisites)
+- [Installation](#installation)
+- [Configuration](#configuration)
+- [API Documentation](#api-documentation)
+- [Database Models](#database-models)
+- [Project Structure](#project-structure)
+- [Usage Examples](#usage-examples)
+- [Security](#security)
 
 ## ✨ Features
 
 ### Core Functionality
-
 - **User Authentication**: Secure registration and login with JWT tokens
 - **KYC Verification**: National ID verification with document upload
 - **Group Management**: Create and manage savings groups (tontines)
@@ -28,7 +27,6 @@ A REST API for managing rotating savings and credit associations (ROSCAs), also 
 - **Messaging**: In-group communication system
 
 ### Security Features
-
 - Password hashing with bcrypt
 - JWT-based authentication
 - Role-based access control (Admin/Particulier)
@@ -49,60 +47,51 @@ A REST API for managing rotating savings and credit associations (ROSCAs), also 
 
 - Node.js (v18 or higher)
 - MongoDB (v4.4 or higher)
-- npm package manager
+- npm or yarn package manager
 
 ## 🚀 Installation
 
 1. **Clone the repository**
-
 ```bash
-git clone <repository-url>
+git clone https://github.com/Abdelilah-Ajjouqa/Tirelire.git
 cd Tirelire
-
 ```
 
-1. **Install dependencies**
-
+2. **Install dependencies**
 ```bash
 npm install
-
 ```
 
-1. **Create environment file**
-
+3. **Create environment file**
 ```bash
 # Create .env file in the root directory
 touch .env
-
 ```
 
-1. **Configure environment variables** (see [Configuration](https://www.notion.so/cb4369d9154f41a18de6c57a17e0d638?pvs=21))
-2. **Start MongoDB**
+4. **Configure environment variables** (see [Configuration](#configuration))
 
+5. **Start MongoDB**
 ```bash
 # Make sure MongoDB is running locally or provide remote connection string
 mongod
-
 ```
 
-1. **Run the application**
-
+6. **Run the application**
 ```bash
 # Development mode with auto-reload
 npm run dev
 
 # Production mode
 node src/server.js
-
 ```
 
 The server will start on `http://localhost:3000`
 
 ## ⚙️ Configuration
 
-Create a `.env` file in the root directory with these variables:
+Create a `.env` file in the root directory with the following variables:
 
-```
+```env
 # Server Configuration
 PORT=3000
 NODE_ENV=development
@@ -116,23 +105,19 @@ JWT_EXPIRES_IN=7d
 
 # File Upload
 MAX_FILE_SIZE=5242880
-
 ```
 
 ## 📚 API Documentation
 
 ### Base URL
-
 ```
 http://localhost:3000/api
-
 ```
 
 ### Authentication Endpoints
 
-### Register User
-
-```
+#### Register User
+```http
 POST /api/auth/register
 Content-Type: application/json
 
@@ -142,11 +127,9 @@ Content-Type: application/json
   "email": "john.doe@example.com",
   "password": "securePassword123"
 }
-
 ```
 
 **Response:**
-
 ```json
 {
   "message": "User registered successfully",
@@ -161,12 +144,10 @@ Content-Type: application/json
     "token": "jwt_token_here"
   }
 }
-
 ```
 
-### Login
-
-```
+#### Login
+```http
 POST /api/auth/login
 Content-Type: application/json
 
@@ -174,11 +155,9 @@ Content-Type: application/json
   "email": "john.doe@example.com",
   "password": "securePassword123"
 }
-
 ```
 
 **Response:**
-
 ```json
 {
   "message": "Login successful",
@@ -195,25 +174,21 @@ Content-Type: application/json
     "token": "jwt_token_here"
   }
 }
-
 ```
 
 ### KYC Endpoints
 
-### Submit KYC Verification
-
-```
+#### Submit KYC Verification
+```http
 POST /api/kyc/submit
 Authorization: Bearer {token}
 Content-Type: multipart/form-data
 
 nationalIdNumber: "AB123456"
 nationalIdImage: [file]
-
 ```
 
 **Response:**
-
 ```json
 {
   "message": "KYC verification has been submitted",
@@ -225,19 +200,15 @@ nationalIdImage: [file]
     "submittedAt": "2025-10-17T10:00:00.000Z"
   }
 }
-
 ```
 
-### Get KYC Status
-
-```
+#### Get KYC Status
+```http
 GET /api/kyc/status
 Authorization: Bearer {token}
-
 ```
 
 **Response:**
-
 ```json
 {
   "data": {
@@ -247,14 +218,12 @@ Authorization: Bearer {token}
     "submittedAt": "2025-10-17T10:00:00.000Z"
   }
 }
-
 ```
 
 ### Group Endpoints
 
-### Create Group
-
-```
+#### Create Group
+```http
 POST /api/group
 Authorization: Bearer {token}
 Content-Type: application/json
@@ -266,28 +235,22 @@ Content-Type: application/json
   "members": ["user_id_1", "user_id_2"],
   "paymentSchedule": ["2025-11-01", "2025-12-01"]
 }
-
 ```
 
-### Get All Groups
-
-```
+#### Get All Groups
+```http
 GET /api/group
 Authorization: Bearer {token}
-
 ```
 
-### Get Specific Group
-
-```
+#### Get Specific Group
+```http
 GET /api/group/:groupId
 Authorization: Bearer {token}
-
 ```
 
-### Update Group
-
-```
+#### Update Group
+```http
 PATCH /api/group/:groupId
 Authorization: Bearer {token}
 Content-Type: application/json
@@ -295,22 +258,18 @@ Content-Type: application/json
 {
   "groupName": "Updated Group Name"
 }
-
 ```
 
-### Delete Group
-
-```
+#### Delete Group
+```http
 DELETE /api/group/:groupId
 Authorization: Bearer {token}
-
 ```
 
 ## 🗄️ Database Models
 
 ### User Model
-
-```jsx
+```javascript
 {
   firstName: String (required),
   lastName: String (required),
@@ -328,12 +287,10 @@ Authorization: Bearer {token}
   createdAt: Date,
   updatedAt: Date
 }
-
 ```
 
 ### Group Model
-
-```jsx
+```javascript
 {
   groupName: String (required),
   createdBy: [ObjectId -> User] (required),
@@ -353,12 +310,10 @@ Authorization: Bearer {token}
   createdAt: Date,
   updatedAt: Date
 }
-
 ```
 
 ### KYCVerification Model
-
-```jsx
+```javascript
 {
   user: ObjectId -> User (required),
   nationalIdNumber: String (required),
@@ -370,29 +325,25 @@ Authorization: Bearer {token}
   verificationNotes: String,
   submittedAt: Date
 }
-
 ```
 
 ### Payment Model
-
-```jsx
+```javascript
 {
   amount: Number (required),
   paidBy: ObjectId -> User (required),
   group: ObjectId -> Group (required),
-  cycleNumber: Number,
+  cycleNumber: Number (required),
   paymentDate: Date (required),
   status: Enum["pending", "completed", "failed"],
   confirmedBy: ObjectId -> User,
   createdAt: Date,
   updatedAt: Date
 }
-
 ```
 
 ### Message Model
-
-```jsx
+```javascript
 {
   group: ObjectId -> Group (required),
   sender: ObjectId -> User (required),
@@ -402,12 +353,10 @@ Authorization: Bearer {token}
   readBy: [ObjectId -> User],
   createdAt: Date
 }
-
 ```
 
 ### Notification Model
-
-```jsx
+```javascript
 {
   recipientUser: ObjectId -> User,
   recipientGroup: ObjectId -> Group,
@@ -420,7 +369,6 @@ Authorization: Bearer {token}
   createdAt: Date,
   updatedAt: Date
 }
-
 ```
 
 ## 📁 Project Structure
@@ -458,14 +406,13 @@ Tirelire/
 │   │   ├── kyc.validation.js       # KYC validation schemas
 │   │   └── validation.js           # General validation schemas
 │   ├── app.js                      # Express app configuration
-│   │   └── server.js                   # Server entry point
+│   └── server.js                   # Server entry point
 ├── public/
 │   └── uploads/
 │       └── kyc/                    # KYC document uploads
 ├── .env                            # Environment variables
 ├── package.json                    # Dependencies and scripts
 └── README.md                       # This file
-
 ```
 
 ## 💡 Usage Examples
@@ -473,7 +420,6 @@ Tirelire/
 ### Complete User Flow
 
 1. **Register a new user**
-
 ```bash
 curl -X POST http://localhost:3000/api/auth/register \
   -H "Content-Type: application/json" \
@@ -483,11 +429,9 @@ curl -X POST http://localhost:3000/api/auth/register \
     "email": "alice@example.com",
     "password": "securePass123"
   }'
-
 ```
 
-1. **Login**
-
+2. **Login**
 ```bash
 curl -X POST http://localhost:3000/api/auth/login \
   -H "Content-Type: application/json" \
@@ -495,21 +439,17 @@ curl -X POST http://localhost:3000/api/auth/login \
     "email": "alice@example.com",
     "password": "securePass123"
   }'
-
 ```
 
-1. **Submit KYC**
-
+3. **Submit KYC**
 ```bash
 curl -X POST http://localhost:3000/api/kyc/submit \
   -H "Authorization: Bearer YOUR_TOKEN" \
   -F "nationalIdNumber=AB123456" \
   -F "nationalIdImage=@/path/to/id.jpg"
-
 ```
 
-1. **Create a group** (after KYC approval)
-
+4. **Create a Group** (after KYC approval)
 ```bash
 curl -X POST http://localhost:3000/api/group \
   -H "Authorization: Bearer YOUR_TOKEN" \
@@ -519,42 +459,45 @@ curl -X POST http://localhost:3000/api/group \
     "amountPerCycle": 5000,
     "totalCycle": 10
   }'
-
 ```
 
 ## 🔒 Security
 
-### Security Measures
+### Implemented Security Measures
 
 1. **Password Security**
-    - Passwords hashed using bcrypt (12 salt rounds)
-    - Never stored or transmitted in plain text
+   - Passwords hashed using bcrypt (12 salt rounds)
+   - Never stored or transmitted in plain text
+
 2. **JWT Authentication**
-    - Stateless token-based authentication
-    - Tokens expire after 7 days (configurable)
-    - Tokens include user ID in payload
+   - Stateless token-based authentication
+   - Tokens expire after 7 days (configurable)
+   - Tokens include user ID in payload
+
 3. **Authorization**
-    - Role-based access control (RBAC)
-    - Admin-only routes protected
-    - User-specific data access restrictions
+   - Role-based access control (RBAC)
+   - Admin-only routes protected
+   - User-specific data access restrictions
+
 4. **File Upload Security**
-    - File type validation (images only)
-    - File size limits (5MB max)
-    - Secure file naming with timestamps
-    - Isolated upload directory
+   - File type validation (images only)
+   - File size limits (5MB max)
+   - Secure file naming with timestamps
+   - Isolated upload directory
+
 5. **Input Validation**
-    - Zod schema validation for all inputs
-    - Email format validation
-    - Password strength requirements
+   - Zod schema validation for all inputs
+   - Email format validation
+   - Password strength requirements
 
 ### Best Practices
 
 - Always use HTTPS in production
-- Update dependencies regularly
+- Regularly update dependencies
 - Implement rate limiting for API endpoints
 - Use environment variables for sensitive data
 - Enable MongoDB authentication in production
-- Handle errors properly without exposing sensitive information
+- Implement proper error handling without exposing sensitive information
 
 ## 🤝 Contributing
 
@@ -570,7 +513,7 @@ This project is licensed under the ISC License.
 
 ## 👥 Authors
 
-- Development Team — *Initial work*
+- Development Team - *Initial work*
 
 ## 🙏 Acknowledgments
 
