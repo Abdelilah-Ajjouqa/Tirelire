@@ -1,4 +1,5 @@
 import e from 'express';
+import * as groupControllers from '../controllers/group.controller.js';
 
 const router = e.Router();
 
