@@ -1,5 +1,7 @@
 import jwt from 'jsonwebtoken';
+import dotenv from 'dotenv';
 
+dotenv.config();
 export default class JWTService {
 
     constructor(secret = process.env.JWT_SECRET, expireIn = process.env.JWT_EXPIRES_IN) {

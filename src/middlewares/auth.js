@@ -1,5 +1,5 @@
 import User from "../models/User.js";
-import JWTService from "../services/JWTService.js";
+import JWTService from "../services/JWT.service.js";
 
 
 const jwtService = new JWTService();

@@ -1,6 +1,6 @@
 import bcrypt from 'bcryptjs';
 import User from '../models/User.js';
-import JWTService from '../services/JWTService.js';
+import JWTService from '../services/JWT.service.js';
 import { validateUserRegistration, validateUserLogin } from '../validation/validation.js';
 
 // Create JWT service instance
