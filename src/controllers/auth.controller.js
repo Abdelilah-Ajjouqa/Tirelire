@@ -1,7 +1,10 @@
 import bcrypt from 'bcryptjs';
 import User from '../models/User.js';
-import { generateToken } from '../utils/generateToken.js';
+import JWTService from '../services/JWTService.js';
 import { validateUserRegistration, validateUserLogin } from '../validation/validation.js';
+
+// Create JWT service instance
+const jwtService = new JWTService();
 
 export const register = async (req, res) => {
     try {
@@ -35,8 +38,10 @@ export const register = async (req, res) => {
             password: hashedPassword
         });
 
-        // Generate JWT token
-        const token = generateToken(user._id);
+        const token = jwtService.generateToken(user._id.toString(), {
+            email: user.email,
+            role: user.role
+        });
 
         res.status(201).json({
             message: "User registered successfully",
@@ -91,8 +96,13 @@ export const login = async (req, res) => {
             });
         }
 
-        // Generate JWT token
-        const token = generateToken(user._id);
+        const token = jwtService.generateToken(user._id.toString(), {
+            email: user.email,
+            role: user.role
+        });
+
+        // generate refresh token
+        const refreshToken = jwtService.generateRefreshToken(user._id.toString());
 
         res.status(200).json({
             message: "Login successful",
@@ -106,7 +116,8 @@ export const login = async (req, res) => {
                     isKYCVerified: user.isKYCVerified,
                     facialVerificationStatus: user.facialVerificationStatus
                 },
-                token
+                token,
+                refreshToken
             }
         });
 
@@ -114,6 +125,88 @@ export const login = async (req, res) => {
         console.error('Login error:', error);
         res.status(500).json({
             message: "Internal server error"
+        });
+    }
+};
+
+export const refreshToken = async (req, res) => {
+    try {
+        const { refreshToken } = req.body;
+
+        if (!refreshToken) {
+            return res.status(400).json({
+                message: "Refresh token is required"
+            });
+        }
+
+        // Verify refresh token
+        const decoded = jwtService.verifyToken(refreshToken);
+
+        // Check if it's a refresh token
+        if (decoded.type !== 'refresh') {
+            return res.status(400).json({
+                message: "Invalid token type"
+            });
+        }
+
+        // Find user
+        const user = await User.findById(decoded.userId).select('-password');
+        if (!user) {
+            return res.status(401).json({
+                message: "User not found"
+            });
+        }
+
+        // Generate new tokens
+        const newToken = jwtService.generateToken(user._id.toString(), {
+            email: user.email,
+            role: user.role
+        });
+        const newRefreshToken = jwtService.generateRefreshToken(user._id.toString());
+
+        res.status(200).json({
+            message: "Token refreshed successfully",
+            data: {
+                token: newToken,
+                refreshToken: newRefreshToken
+            }
+        });
+
+    } catch (error) {
+        console.error('Refresh token error:', error);
+        res.status(401).json({
+            message: "Invalid or expired refresh token",
+            error: error.message
+        });
+    }
+};
+
+export const verifyToken = async (req, res) => {
+    try {
+        const authHeader = req.header('Authorization');
+        const token = jwtService.extractTokenFromHeader(authHeader);
+
+        if (!token) {
+            return res.status(400).json({
+                message: "Token is required"
+            });
+        }
+
+        const decoded = jwtService.verifyToken(token);
+        const expirationDate = jwtService.getTokenExpiration(token);
+
+        res.status(200).json({
+            message: "Token is valid",
+            data: {
+                userId: decoded.userId,
+                expiresAt: expirationDate
+            }
+        });
+
+    } catch (error) {
+        res.status(401).json({
+            message: "Invalid token",
+            error: error.message
         });
     }
 };
