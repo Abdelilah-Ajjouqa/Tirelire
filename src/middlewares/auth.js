@@ -1,9 +1,13 @@
-import jwt from "jsonwebtoken";
 import User from "../models/User.js";
+import JWTService from "../services/JWT.service.js";
+
+
+const jwtService = new JWTService();
 
 export const authenticate = async (req, res, next) => {
     try {
-        const token = req.header('Authorization')?.replace('Bearer ', '');
+        const authHeader = req.header('Authorization');
+        const token = jwtService.extractTokenFromHeader(authHeader);
 
         if (!token) {
             return res.status(401).json({
@@ -11,7 +15,10 @@ export const authenticate = async (req, res, next) => {
             });
         }
 
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        // Verify the token
+        const decoded = jwtService.verifyToken(token);
+        
+        // Find user by ID from token
         const user = await User.findById(decoded.userId).select('-password');
 
         if (!user) {
@@ -20,11 +27,13 @@ export const authenticate = async (req, res, next) => {
             });
         }
 
+        // Attach user and decoded token to request
         req.user = user;
+        req.tokenPayload = decoded;
         next();
 
     } catch (error) {
-        res.status(401).json({
+        return res.status(401).json({
             message: 'Token is not valid',
             error: error.message
         });
@@ -39,3 +48,5 @@ export const requireAdmin = (req, res, next) => {
     }
     next();
 };
+
+export { jwtService };
