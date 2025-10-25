@@ -1,7 +1,6 @@
-import * as groupServices from '../services/group.service.js';
+import GroupServices from '../services/group.service.js';
 import Group from '../models/Group.js';
 import User from '../models/User.js';
-import e from 'express';
 
 
 //Group Managment
@@ -99,10 +98,10 @@ const createGroup = async (req, res) => {
 
         const savedGroup = await newGroup.save();
 
-        if (!userDoc.groups) userDoc.groups = [];
-        if (!userDoc.groups.map(String).includes(savedGroup._id)) {
-            userDoc.groups.push(savedGroup._id);
-            await userDoc.save();
+        if (!user.groups) user.groups = [];
+        if (!user.groups.map(String).includes(savedGroup._id.toString())) {
+            user.groups.push(savedGroup._id);
+            await user.save();
         }
 
         return res.status(201).json({
@@ -176,23 +175,109 @@ const deleteGroup = async (req, res) => {
 
 // Member management
 const listMembers = async (req, res) => {
-    //
+    try {
+        const groupId = req.groupId;
+        const members = await GroupServices.listMembers(groupId);
+        
+        return res.status(200).json({
+            message: "members list retrieved successfully",
+            data: members
+        });
+    } catch (error) {
+        res.status(500).json({
+            message: "error, cannot access to listMembers()",
+            error: error.message
+        });
+    }
 }
 
 const addMember = async (req, res) => {
-    //
+    try {
+        const groupId = req.groupId;
+        const { userEmail } = req.body;
+        const creatorId = req.user._id;
+
+        if (!userEmail) {
+            return res.status(400).json({
+                message: "userEmail is required"
+            });
+        }
+
+        const group = await GroupServices.addMember(groupId, userEmail, creatorId);
+
+        return res.status(200).json({
+            message: "member added successfully",
+            data: group
+        });
+    } catch (error) {
+        res.status(500).json({
+            message: "error, cannot access to addMember()",
+            error: error.message
+        });
+    }
 }
 
 const removeMember = async (req, res) => {
-    //
+    try {
+        const groupId = req.groupId;
+        const { userId } = req.body;
+
+        if (!userId) {
+            return res.status(400).json({
+                message: "userId is required"
+            });
+        }
+
+        const group = await GroupServices.removeMember(groupId, userId);
+
+        return res.status(200).json({
+            message: "member removed successfully",
+            data: group
+        });
+    } catch (error) {
+        res.status(500).json({
+            message: "error, cannot access to removeMember()",
+            error: error.message
+        });
+    }
 }
 
 const joinGroup = async (req, res) => {
-    //
+    try {
+        const groupId = req.groupId;
+        const userId = req.user._id;
+
+        const group = await GroupServices.joinGroup(userId, groupId);
+
+        return res.status(200).json({
+            message: "joined group successfully",
+            data: group
+        });
+    } catch (error) {
+        res.status(500).json({
+            message: "error, cannot access to joinGroup()",
+            error: error.message
+        });
+    }
 }
 
 const leaveGroup = async (req, res) => {
-    //
+    try {
+        const groupId = req.groupId;
+        const userId = req.user._id;
+
+        const group = await GroupServices.leaveGroup(userId, groupId);
+
+        return res.status(200).json({
+            message: "left group successfully",
+            data: group
+        });
+    } catch (error) {
+        res.status(500).json({
+            message: "error, cannot access to leaveGroup()",
+            error: error.message
+        });
+    }
 }
 
 
