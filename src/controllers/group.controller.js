@@ -1,6 +1,12 @@
 import GroupServices from '../services/group.service.js';
 import Group from '../models/Group.js';
 import User from '../models/User.js';
+import { 
+    validateCreateGroup, 
+    validateUpdateGroup, 
+    validateAddMember, 
+    validateRemoveMember 
+} from '../validation/group.validation.js';
 
 class GroupController {
     // Group Management
@@ -56,7 +62,16 @@ class GroupController {
                 })
             }
 
-            const data = req.body;
+            // Validate request body
+            const validation = validateCreateGroup(req.body);
+            if (!validation.success) {
+                return res.status(400).json({
+                    message: "Validation failed",
+                    errors: validation.error.errors
+                });
+            }
+
+            const data = validation.data;
 
             const creatorId = user._id;
             const membersSet = new Set((Array.isArray(data.members) ? data.members : []));
@@ -97,7 +112,16 @@ class GroupController {
 
     static async updateGroup(req, res) {
         try {
-            const { groupName } = req.body
+            // Validate request body
+            const validation = validateUpdateGroup(req.body);
+            if (!validation.success) {
+                return res.status(400).json({
+                    message: "Validation failed",
+                    errors: validation.error.errors
+                });
+            }
+
+            const data = validation.data;
 
             const user = await User.findById(req.user._id)
             if (!user) {
@@ -113,13 +137,14 @@ class GroupController {
                 })
             }
 
-            const groupUpdated = { ...group, ...{ groupName } }
+            const groupUpdated = { ...group, ...data }
             group = groupUpdated;
 
             const savedGroup = await group.save()
             if (savedGroup)(
                 res.status(200).json({
-                    message: ""
+                    message: "group updated successfully",
+                    data: savedGroup
                 })
             )
 
@@ -171,8 +196,17 @@ class GroupController {
 
     static async addMember(req, res) {
         try {
+            // Validate request body
+            const validation = validateAddMember(req.body);
+            if (!validation.success) {
+                return res.status(400).json({
+                    message: "Validation failed",
+                    errors: validation.error.errors
+                });
+            }
+
+            const data = validation.data;
             const groupId = req.groupId;
-            const data = req.body;
             const creatorId = req.user._id;
 
             const group = await GroupServices.addMember(groupId, data.userEmail, creatorId);
@@ -191,8 +225,17 @@ class GroupController {
 
     static async removeMember(req, res) {
         try {
+            // Validate request body
+            const validation = validateRemoveMember(req.body);
+            if (!validation.success) {
+                return res.status(400).json({
+                    message: "Validation failed",
+                    errors: validation.error.errors
+                });
+            }
+
+            const data = validation.data;
             const groupId = req.groupId;
-            const data = req.body;
 
             const group = await GroupServices.removeMember(groupId, data.userId);
 
