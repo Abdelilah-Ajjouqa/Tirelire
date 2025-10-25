@@ -1,30 +1,37 @@
-import jwt from 'jsonwebtoken';
-import User from '../models/User.js';
+import User from "../models/User.js";
+import JWTService from "../services/JWT.service.js";
+
+
+const jwtService = new JWTService();
 
 export const authenticate = async (req, res, next) => {
     try {
-        const token = req.headers.authorization?.split(' ')[1];
-        
+        const authHeader = req.header('Authorization');
+        const token = jwtService.extractTokenFromHeader(authHeader);
+
         if (!token) {
             return res.status(401).json({ message: 'Authentication required' });
         }
 
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        // Verify the token
+        const decoded = jwtService.verifiyToken(token);
         
-        // Verify user still exists and is active
-        const user = await User.findById(decoded.id).select('-password');
-        
+        // Find user by ID from token
+        const user = await User.findById(decoded.userId).select('-password');
+
         if (!user) {
             return res.status(401).json({ message: 'User no longer exists' });
         }
 
+        // Attach user and decoded token to request
         req.user = user;
+        req.tokenPayload = decoded;
         next();
     } catch (error) {
-        if (error.name === 'TokenExpiredError') {
-            return res.status(401).json({ message: 'Token expired' });
-        }
-        res.status(401).json({ message: 'Invalid token' });
+        return res.status(401).json({
+            message: 'Token is not valid',
+            error: error.message
+        });
     }
 };
 
@@ -39,3 +46,5 @@ export const isAdmin = async (req, res, next) => {
     
     next();
 };
+
+export { jwtService };
