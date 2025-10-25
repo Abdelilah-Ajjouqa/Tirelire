@@ -10,6 +10,14 @@ export default class GroupServices {
         return group;
     }
 
+    static async checkUserExisting(userId){
+        const user = await User.findById(userId);
+        if(!user){
+            throw new Error('user not exist')
+        }
+        return user;
+    }
+
     static async listMembers(groupId) {
         const group = await this.checkGroupExisting(groupId);
         return group.members;
@@ -50,6 +58,37 @@ export default class GroupServices {
 
         group.members = group.members.filter(m => m.toString() !== userId.toString());
         await group.save();
+        return group;
+    }
+
+    static async joinGroup(userId, groupId){
+        const group = await this.checkGroupExisting(groupId);
+        await this.checkUserExisting(userId);
+
+        if (group.members.includes(userId)) {
+            throw new Error('You are already a member of this group');
+        }
+
+        await group.updateOne({ $push: { members: userId } });
+        
+        return group;
+    }
+
+    static async leaveGroup(userId, groupId){
+        const group = await this.checkGroupExisting(groupId);
+        await this.checkUserExisting(userId);
+
+        if (!group.members.includes(userId)) {
+            throw new Error('You are not a member of this group');
+        }
+
+        if (group.createdBy.toString() === userId.toString()) {
+            throw new Error('Group creator cannot leave the group');
+        }
+
+        group.members = group.members.filter(m => m.toString() !== userId.toString());
+        await group.save();
+        
         return group;
     }
 }
