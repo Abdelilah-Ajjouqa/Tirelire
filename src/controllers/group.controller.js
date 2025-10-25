@@ -1,6 +1,7 @@
 import * as groupServices from '../services/group.service.js';
 import Group from '../models/Group.js';
 import User from '../models/User.js';
+import e from 'express';
 
 
 //Group Managment
@@ -153,7 +154,23 @@ const updateGroup = async (req, res) => {
 }
 
 const deleteGroup = async (req, res) => {
-    //
+    try {
+        const groupId = req.params.groupId;
+        if(!(await Group.findById(groupId))){
+            throw new Error('this group is not exist');
+        }
+
+        await Group.findByIdAndDelete(groupId);
+
+        res.status(200).json({
+            message: "the group deleted successfully"
+        })
+    } catch (error) {
+        res.status(500).json({
+            message: "error, cannot access to delete function",
+            error: error.message,
+        })
+    }
 }
 
 
